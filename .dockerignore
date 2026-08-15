@@ -1,0 +1,20 @@
+# Keep the Docker context clean: only ship the runnable source. All author-only
+# / private material is excluded so it can never enter the built image.
+private_tests/
+bug_fix_prompts.md
+case-summary.md
+patches/
+gold_patch.patch
+claude-run-instructions.txt
+submission-draft.txt
+.git/
+.gitignore
+.idea/
+.vscode/
+*.exe
+*.test
+*.out
+*.log
+*.tmp
+notes.json
+benzhi.build_docker.sh
