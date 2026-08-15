@@ -5,9 +5,16 @@ bug_fix_prompts.md
 private_tests/
 patches/
 gold_patch.patch
+gold_patch_bug*.patch
 claude-run-instructions.txt
+claude-run-instructions-bug*.txt
+gold-run-instructions.txt
+gold-run-instructions-bug*.txt
 submission-draft.txt
+submission-draft-bug*.txt
 case-summary.md
+BUG_REPO.md
+BUG_REPRO.md
 
 # Go 编译产物
 *.exe
