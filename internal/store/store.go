@@ -67,12 +67,11 @@ func (s *Store) load() {
 
 // Create inserts a new note, assigning it the next available identifier.
 func (s *Store) Create(n model.Note) (*model.Note, error) {
-	s.nextID++
-	id := strconv.FormatInt(s.nextID, 10)
-
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	s.nextID++
+	id := strconv.FormatInt(s.nextID, 10)
 	now := time.Now()
 	n.ID = id
 	n.CreatedAt = now

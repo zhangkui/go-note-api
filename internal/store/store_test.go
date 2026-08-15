@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -158,5 +159,44 @@ func TestStore_Persistence(t *testing.T) {
 	}
 	if got.Title != "persisted" {
 		t.Fatalf("got %q, want persisted", got.Title)
+	}
+}
+
+func TestStore_CreateConcurrentPersistsUniqueNotes(t *testing.T) {
+	const noteCount = 100
+
+	f := filepath.Join(t.TempDir(), "notes.json")
+	s := New(f)
+	ids := make(chan string, noteCount)
+	var wg sync.WaitGroup
+	for i := 0; i < noteCount; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			created, err := s.Create(model.Note{Title: "concurrent"})
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			ids <- created.ID
+		}()
+	}
+	wg.Wait()
+	close(ids)
+	uniqueIDs := make(map[string]bool)
+	for id := range ids {
+		if uniqueIDs[id] {
+			t.Fatal(id)
+		}
+		uniqueIDs[id] = true
+	}
+	if len(uniqueIDs) != noteCount {
+		t.Fatal(len(uniqueIDs))
+	}
+	if len(s.List()) != noteCount {
+		t.Fatal(len(s.List()))
+	}
+	if len(New(f).List()) != noteCount {
+		t.Fatal(len(New(f).List()))
 	}
 }
